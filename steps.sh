@@ -53,7 +53,14 @@ source .env
 az acr build \
 --resource-group $RESOURCE_GROUP \
 --registry $ACR_NAME \
---image ado-agent:latest .
+--image ado-agent:{{.Run.ID}} .
+
+# Get the latest image id
+IMAGE_ID=$(az acr repository show-tags \
+--name $ACR_NAME \
+--repository ado-agent \
+--orderby time_desc \
+--top 1 --output tsv)
 
 # Create a Kubernetes deployment
 # cat <<EOF > deployment.yaml
@@ -61,14 +68,14 @@ cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
 metadata:
-  name: azdevops
+  name: azdevops-pat
 data:
-  AZP_TOKEN: '$(echo $PAT | base64)'
+  personalAccessToken: '$(echo $PAT | base64)'
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: azdevops-deployment
+  name: ado-agent-deployment
   labels:
     app: azdevops-agent
 spec:
@@ -83,7 +90,7 @@ spec:
     spec:
       containers:
       - name: azdevops-agent
-        image: $ACR_NAME.azurecr.io/ado-agent:latest
+        image: $ACR_NAME.azurecr.io/ado-agent:$IMAGE_ID
         env:
           - name: AZP_URL
             value: "https://dev.azure.com/$ORGANIZATION_NAME" 
@@ -93,7 +100,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: azdevops
-                key: AZP_TOKEN
+                key: personalAccessToken
 EOF
 
 # Check the status of the deployment
@@ -103,13 +110,6 @@ kubectl logs -f $(kubectl get pods -l app=azdevops-agent -o jsonpath="{.items[0]
 # Let create KEDA configuration to scale the agents
 # cat <<EOF > keda-config.yaml
 cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  name: pipeline-auth
-data:
-  personalAccessToken: '$(echo $PAT | base64)'
----
 apiVersion: keda.sh/v1alpha1
 kind: TriggerAuthentication
 metadata:
@@ -117,7 +117,7 @@ metadata:
 spec:
   secretTargetRef:
     - parameter: personalAccessToken
-      name: pipeline-auth
+      name: azdevops-pat
       key: personalAccessToken
 ---
 apiVersion: keda.sh/v1alpha1
@@ -126,7 +126,7 @@ metadata:
   name: azure-pipelines-scaledobject
 spec:
   scaleTargetRef:
-    name: azdevops-deployment
+    name: ado-agent-deployment
   minReplicaCount: 1
   maxReplicaCount: 5 #Maximum number of parallel instances
   triggers:

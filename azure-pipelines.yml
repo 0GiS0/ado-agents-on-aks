@@ -1,8 +1,0 @@
-trigger:
-- main
-
-pool: agents-on-aks
-
-steps:
-- script: echo "Running this line on the AKS agent"
-  displayName: 'Run a one-line script'
