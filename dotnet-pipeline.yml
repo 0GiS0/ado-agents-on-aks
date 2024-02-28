@@ -17,6 +17,6 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '8.x.x'
+    version: '8.x'
 - script: dotnet build --configuration Release
   displayName: 'Building the project'
