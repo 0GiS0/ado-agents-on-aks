@@ -14,5 +14,12 @@ steps:
 - checkout: MyJavaRepo
 - script: echo "Running this job on $(Agent.OS) with name $(Agent.Name) and version $(Agent.Version)"
   displayName: 'Showing OS of the agent'
-- script: ./gradlew build
-  displayName: 'Building the project'
+- task: Gradle@3
+  inputs:
+    gradleWrapperFile: 'gradlew'
+    tasks: 'build'
+    publishJUnitResults: true
+    testResultsFiles: '**/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    sonarQubeRunAnalysis: false
+    spotBugsAnalysis: false
