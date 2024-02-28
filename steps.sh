@@ -142,4 +142,7 @@ spec:
      name: pipeline-trigger-auth
 EOF
 
-kubectl get scaledobject
+watch kubectl get scaledobject
+
+# Clean up
+az group delete --name $RESOURCE_GROUP --yes --no-wait

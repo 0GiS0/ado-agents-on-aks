@@ -13,12 +13,20 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
     lsb-release \
     software-properties-common \
     default-jdk \
-    wget
+    wget \
+    # Cleanup
+    && rm -rf /var/lib/apt/lists/*
 
 # Install .NET
 RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
     && chmod +x dotnet-install.sh \
-    && ./dotnet-install.sh --version latest
+    && ./dotnet-install.sh --version latest \
+    && rm dotnet-install.sh \
+    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+
+
+# Configure .NET Path
+ENV PATH="${PATH}:/root/.dotnet"
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
