@@ -101,6 +101,10 @@ spec:
               secretKeyRef:
                 name: azdevops-pat
                 key: personalAccessToken
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
 EOF
 
 # Check the status of the deployment

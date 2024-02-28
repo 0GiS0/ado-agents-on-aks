@@ -3,7 +3,7 @@ kind: Secret
 metadata:
   name: azdevops-pat
 data:
-  personalAccessToken: 'Cg=='
+  personalAccessToken: 'ang3dXE0dXJjZWM2cHV1em5xeWFhYmZvd2JqZnV5ZWd3c2s2bXdybWxubngzYnlseTJxcQo='
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -23,17 +23,19 @@ spec:
     spec:
       containers:
       - name: azdevops-agent
-        image: adoimages.azurecr.io/ado-agent:
-        requests:
-          cpu: "1"
-          memory: "2Gi"
+        image: adoimages.azurecr.io/ado-agent:db5        
         env:
           - name: AZP_URL
-            value: "https://dev.azure.com/" 
+            value: "https://dev.azure.com/returngisorg" 
           - name: AZP_POOL
-            value: ""
+            value: "agents-on-aks"
           - name: AZP_TOKEN
             valueFrom:
               secretKeyRef:
                 name: azdevops-pat
                 key: personalAccessToken
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+
