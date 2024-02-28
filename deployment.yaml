@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: azdevops
+data:
+  AZP_TOKEN: 'ang3dXE0dXJjZWM2cHV1em5xeWFhYmZvd2JqZnV5ZWd3c2s2bXdybWxubngzYnlseTJxcQo=' #replace
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azdevops-deployment
+  labels:
+    app: azdevops-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: azdevops-agent
+  template:
+    metadata:
+      labels:
+        app: azdevops-agent
+    spec:
+      containers:
+      - name: azdevops-agent
+        image: adoimages.azurecr.io/ado-agent:latest
+        env:
+          - name: AZP_URL
+            value: "https://dev.azure.com/returngisorg" 
+          - name: AZP_POOL
+            value: "agents-on-aks"
+          - name: AZP_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: azdevops
+                key: AZP_TOKEN
