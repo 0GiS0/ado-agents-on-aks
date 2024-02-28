@@ -63,8 +63,8 @@ IMAGE_ID=$(az acr repository show-tags \
 --top 1 --output tsv)
 
 # Create a Kubernetes deployment
-# cat <<EOF > deployment.yaml
 cat <<EOF | kubectl apply -f -
+# cat <<EOF > deployment.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -90,7 +90,7 @@ spec:
     spec:
       containers:
       - name: azdevops-agent
-        image: $ACR_NAME.azurecr.io/ado-agent:$IMAGE_ID
+        image: $ACR_NAME.azurecr.io/ado-agent:$IMAGE_ID        
         env:
           - name: AZP_URL
             value: "https://dev.azure.com/$ORGANIZATION_NAME" 
@@ -99,7 +99,7 @@ spec:
           - name: AZP_TOKEN
             valueFrom:
               secretKeyRef:
-                name: azdevops
+                name: azdevops-pat
                 key: personalAccessToken
 EOF
 

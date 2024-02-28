@@ -11,8 +11,16 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
     iputils-ping \
     jq \
     lsb-release \
-    software-properties-common
+    software-properties-common \
+    default-jdk \
+    wget
 
+# Install .NET
+RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
+    && chmod +x dotnet-install.sh \
+    && ./dotnet-install.sh --version latest
+
+# Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
