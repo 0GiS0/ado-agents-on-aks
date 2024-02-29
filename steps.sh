@@ -110,7 +110,6 @@ spec:
 EOF
 
 
-
 # Check the status of the deployment
 watch kubectl get pods
 kubectl logs -f $(kubectl get pods -l app=azdevops-agent -o jsonpath="{.items[0].metadata.name}")

@@ -32,4 +32,10 @@ WORKDIR /azp
 COPY ./start.sh .
 RUN chmod +x start.sh
 
+# Create agent user and set up home directory
+RUN useradd -m -d /home/agent agent
+RUN chown -R agent:agent /azp /home/agent
+
+USER agent
+
 ENTRYPOINT [ "./start.sh" ]
