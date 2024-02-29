@@ -25,6 +25,11 @@ fi
 export AGENT_ALLOW_RUNASROOT="1"
 
 cleanup() {
+  # If $AZP_PLACEHOLDER is set, skip cleanup
+  if [ -n "$AZP_PLACEHOLDER" ]; then
+    echo 'Running in placeholder mode, skipping cleanup'
+    return
+  fi
   if [ -e config.sh ]; then
     print_header "Cleanup. Removing Azure Pipelines agent..."
 
@@ -64,10 +69,14 @@ if [ -z "$AZP_AGENT_PACKAGE_LATEST_URL" -o "$AZP_AGENT_PACKAGE_LATEST_URL" == "n
 fi
 
 print_header "2. Downloading and extracting Azure Pipelines agent..."
-
+echo "Agent package URL: $AZP_AGENT_PACKAGE_LATEST_URL"
 curl -LsS $AZP_AGENT_PACKAGE_LATEST_URL | tar -xz & wait $!
 
 source ./env.sh
+
+trap 'cleanup; exit 0' EXIT
+trap 'cleanup; exit 130' INT
+trap 'cleanup; exit 143' TERM
 
 print_header "3. Configuring Azure Pipelines agent..."
 
@@ -83,17 +92,18 @@ print_header "3. Configuring Azure Pipelines agent..."
 
 print_header "4. Running Azure Pipelines agent..."
 
-if ! grep -q "template" <<< "$AZP_AGENT_NAME"; then
-  echo "Cleanup Traps Enabled"
+trap 'cleanup; exit 0' EXIT
+trap 'cleanup; exit 130' INT
+trap 'cleanup; exit 143' TERM
 
-  trap 'cleanup; exit 0' EXIT
-  trap 'cleanup; exit 130' INT
-  trap 'cleanup; exit 143' TERM
+chmod +x ./run.sh
 
+
+# If $AZP_PLACEHOLDER is set, skipping running the agent
+if [ -n "$AZP_PLACEHOLDER" ]; then
+  echo 'Running in placeholder mode, skipping running the agent'
+else
+  # To be aware of TERM and INT signals call run.sh
+  # Running it with the --once flag at the end will shut down the agent after the build is executed
+  ./run.sh --once & wait $!
 fi
-
-chmod +x ./run-docker.sh
-
-# To be aware of TERM and INT signals call run.sh
-# Running it with the --once flag at the end will shut down the agent after the build is executed
-./run-docker.sh "$@" --once & wait $!

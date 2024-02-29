@@ -1,3 +1,5 @@
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/docker?view=azure-devops#linux
+
 FROM ubuntu:20.04
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
@@ -12,7 +14,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
     jq \
     lsb-release \
     software-properties-common \
-    wget
+    wget 
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
@@ -22,6 +24,7 @@ RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
     && ./dotnet-install.sh --version latest \
     && rm dotnet-install.sh \
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+
 
 # Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
 ENV TARGETARCH=linux-x64

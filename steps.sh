@@ -67,20 +67,14 @@ IMAGE_ID=$(az acr repository show-tags \
 --orderby time_desc \
 --top 1 --output tsv)
 
-# Create a Kubernetes deployment
+kubectl create secret generic azdevops-pat --from-literal=personalAccessToken=$PAT
+
 cat <<EOF | kubectl apply -f -
-# cat <<EOF > deployment.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: azdevops-pat
-data:
-  personalAccessToken: '$(echo $PAT | base64)'
----
+# cat <<EOF > azdevops-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ado-agent-deployment
+  name: azdevops-deployment
   labels:
     app: azdevops-agent
 spec:
@@ -95,38 +89,32 @@ spec:
     spec:
       containers:
       - name: azdevops-agent
-        image: $ACR_NAME.azurecr.io/ado-agent:$IMAGE_ID        
+        image: $ACR_NAME.azurecr.io/ado-agent:$IMAGE_ID
         env:
           - name: AZP_URL
-            value: "https://dev.azure.com/$ORGANIZATION_NAME" 
+            value: "https://dev.azure.com/$ORGANIZATION_NAME"
           - name: AZP_POOL
             value: "$AGENT_POOL_NAME"
-          - name: AZP_PLACEHOLDER
-            value: "1"
           - name: AZP_TOKEN
             valueFrom:
               secretKeyRef:
                 name: azdevops-pat
                 key: personalAccessToken
-        resources:
-          limits:
-            cpu: "1"
-            memory: "1Gi"
+        volumeMounts:
+        - mountPath: /var/run/docker.sock
+          name: docker-volume
+      volumes:
+      - name: docker-volume
+        hostPath:
+          path: /var/run/docker.sock
 EOF
+
+
 
 # Check the status of the deployment
 watch kubectl get pods
 kubectl logs -f $(kubectl get pods -l app=azdevops-agent -o jsonpath="{.items[0].metadata.name}")
 
-# If you need to test this locally you can use this command
-$ORGANIZATION_NAME="returngisorg"
-$PAT="jbyfg37detfsktntyilfkstt6tz66bnl677yn56ocxfok5f3vvna"
-$ACR_NAME="adoimages"
-$IMAGE_ID="db2"
-$AGENT_POOL_NAME="agents-on-aks"
-
-docker build -t ado-agent -f Dockerfile .
-docker run -e "AZP_URL=https://dev.azure.com/$ORGANIZATION_NAME" -e "AZP_TOKEN=$PAT" -e "AZP_POOL=$AGENT_POOL_NAME" ado-agent
 
 # Let create KEDA configuration to scale the agents
 # cat <<EOF > keda-config.yaml
@@ -147,19 +135,23 @@ metadata:
   name: azure-pipelines-scaledobject
 spec:
   scaleTargetRef:
-    name: ado-agent-deployment
+    name: azdevops-deployment
   minReplicaCount: 1
-  maxReplicaCount: 5 #Maximum number of parallel instances
+  maxReplicaCount: 5 
   triggers:
   - type: azure-pipelines
     metadata:
-      poolID: "$AGENT_POOL_ID"
+      poolName: "$AGENT_POOL_NAME"
       organizationURLFromEnv: "AZP_URL"
     authenticationRef:
      name: pipeline-trigger-auth
 EOF
 
+kubectl describe scaledobject azure-pipelines-scaledobject
 watch kubectl get scaledobject
 
+kubectl delete scaledobject azure-pipelines-scaledobject
+kubectl delete triggerauthentication pipeline-trigger-auth
+
 # Clean up
-az group delete --name $RESOURCE_GROUP --yes --no-wait
+# az group delete --name $RESOURCE_GROUP --yes --no-wait
