@@ -58,7 +58,7 @@ source .env
 az acr build \
 --resource-group $RESOURCE_GROUP \
 --registry $ACR_NAME \
---image ado-agent:{{.Run.ID}} ado-pipeline/.
+--image ado-agent:{{.Run.ID}} ado-agent/.
 
 # Get the latest image id
 IMAGE_ID=$(az acr repository show-tags \
