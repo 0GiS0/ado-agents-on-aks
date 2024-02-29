@@ -67,6 +67,23 @@ IMAGE_ID=$(az acr repository show-tags \
 --orderby time_desc \
 --top 1 --output tsv)
 
+az acr build \
+--resource-group $RESOURCE_GROUP \
+--registry $ACR_NAME \
+--file ado-agent/Dockerfile.alpine \
+--image ado-agent-alpine:{{.Run.ID}} ado-agent/.
+
+# Get the latest image id
+IMAGE_ID=$(az acr repository show-tags \
+--name $ACR_NAME \
+--repository ado-agent-alpine \
+--orderby time_desc \
+--top 1 --output tsv)
+
+az acr login --name $ACR_NAME
+
+docker pull $ACR_NAME.azurecr.io/ado-agent-alpine:$IMAGE_ID
+
 kubectl create secret generic azdevops-pat --from-literal=personalAccessToken=$PAT
 
 cat <<EOF | kubectl apply -f -
@@ -89,7 +106,7 @@ spec:
     spec:
       containers:
       - name: azdevops-agent
-        image: $ACR_NAME.azurecr.io/ado-agent:$IMAGE_ID
+        image: $ACR_NAME.azurecr.io/ado-agent-alpine:$IMAGE_ID
         env:
           - name: AZP_URL
             value: "https://dev.azure.com/$ORGANIZATION_NAME"

@@ -16,10 +16,6 @@ steps:
   displayName: 'Showing OS of the agent'
 - script: az version
   displayName: 'Showing Azure CLI version'
-# - task: UseDotNet@2
-#   inputs:
-#     packageType: 'sdk'
-#     version: '8.x'
 - script: dotnet --help
   displayName: 'Check dotnet version'
 - script: dotnet build --configuration Release
