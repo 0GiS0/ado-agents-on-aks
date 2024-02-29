@@ -16,12 +16,5 @@ steps:
   displayName: 'Showing OS of the agent'
 - script: java -version
   displayName: 'Java version'
-# - task: Gradle@3
-#   inputs:
-#     gradleWrapperFile: 'gradlew'
-#     tasks: 'build'
-#     publishJUnitResults: true
-#     testResultsFiles: '**/TEST-*.xml'
-#     javaHomeOption: 'JDKVersion'
-#     sonarQubeRunAnalysis: false
-#     spotBugsAnalysis: false
+- script: ./gradlew build
+  displayName: 'Build the app'
