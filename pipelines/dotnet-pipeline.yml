@@ -20,7 +20,7 @@ steps:
 #   inputs:
 #     packageType: 'sdk'
 #     version: '8.x'
-- script: dotnet -v
+- script: dotnet --help
   displayName: 'Check dotnet version'
 - script: dotnet build --configuration Release
   displayName: 'Building the project'
