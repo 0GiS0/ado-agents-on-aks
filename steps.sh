@@ -1,8 +1,13 @@
+#!/bin/bash
+
 # Variables
 RESOURCE_GROUP="ado-agents-on-aks"
 AKS_NAME="ado-agents-cluster"
 LOCATION="uksouth"
 ACR_NAME="adoimages"
+
+# Stop on error
+set -e
 
 # Create a resource group
 az group create \
@@ -53,7 +58,7 @@ source .env
 az acr build \
 --resource-group $RESOURCE_GROUP \
 --registry $ACR_NAME \
---image ado-agent:{{.Run.ID}} .
+--image ado-agent:{{.Run.ID}} ado-pipeline/.
 
 # Get the latest image id
 IMAGE_ID=$(az acr repository show-tags \
@@ -96,6 +101,8 @@ spec:
             value: "https://dev.azure.com/$ORGANIZATION_NAME" 
           - name: AZP_POOL
             value: "$AGENT_POOL_NAME"
+          - name: AZP_PLACEHOLDER
+            value: "1"
           - name: AZP_TOKEN
             valueFrom:
               secretKeyRef:
@@ -110,6 +117,16 @@ EOF
 # Check the status of the deployment
 watch kubectl get pods
 kubectl logs -f $(kubectl get pods -l app=azdevops-agent -o jsonpath="{.items[0].metadata.name}")
+
+# If you need to test this locally you can use this command
+$ORGANIZATION_NAME="returngisorg"
+$PAT="jbyfg37detfsktntyilfkstt6tz66bnl677yn56ocxfok5f3vvna"
+$ACR_NAME="adoimages"
+$IMAGE_ID="db2"
+$AGENT_POOL_NAME="agents-on-aks"
+
+docker build -t ado-agent -f Dockerfile .
+docker run -e "AZP_URL=https://dev.azure.com/$ORGANIZATION_NAME" -e "AZP_TOKEN=$PAT" -e "AZP_POOL=$AGENT_POOL_NAME" ado-agent
 
 # Let create KEDA configuration to scale the agents
 # cat <<EOF > keda-config.yaml
