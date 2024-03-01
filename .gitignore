@@ -1,3 +1,4 @@
 .yaml
 .env
 deployment.yaml
+.DS_Store
