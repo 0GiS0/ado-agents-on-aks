@@ -53,16 +53,16 @@ The next step is to deploy the manifests to AKS. You can do this by running the 
 source scripts/03-apply-manifests.sh
 ```
 
-Hurrah! You now have a running Azure DevOps agent on AKS. You can check the logs by running the following command:
+Hurrah 🎉! You now have a running Azure DevOps agent on AKS. You can check the logs by running the following command:
 
 ```bash
-kubectl logs -f $(kubectl get pods -l app=ado-agent -o jsonpath="{.items[0].metadata.name}")
+kubectl logs -f $(kubectl get pods -l app=azdevops-agent -o jsonpath="{.items[0].metadata.name}")
 ```
 
 And you can see how the pod scales by running the following command:
 
 ```bash
-watch kubectl get pods -l app=ado-agent
+watch kubectl get pods -l app=azdevops-agent
 ```
 
 Also It's good to see if the KEDA is working properly by running the following command:
