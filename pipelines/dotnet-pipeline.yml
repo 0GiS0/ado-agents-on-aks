@@ -14,8 +14,8 @@ steps:
 - checkout: MyDotNetRepo
 - script: echo "Running this job on $(Agent.OS) with name $(Agent.Name) and version $(Agent.Version)"
   displayName: 'Showing OS of the agent'
-- script: az version
-  displayName: 'Showing Azure CLI version'
+# - script: az version
+#   displayName: 'Showing Azure CLI version'
 - script: dotnet --help
   displayName: 'Check dotnet version'
 - script: dotnet build --configuration Release
