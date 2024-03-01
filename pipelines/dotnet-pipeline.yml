@@ -16,7 +16,7 @@ steps:
   displayName: 'Showing OS of the agent'
 # - script: az version
 #   displayName: 'Showing Azure CLI version'
-- script: dotnet --help
+- script: $HOME/.dotnet/dotnet --help
   displayName: 'Check dotnet version'
 - script: dotnet build --configuration Release
   displayName: 'Building the project'
