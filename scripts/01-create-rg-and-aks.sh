@@ -16,10 +16,11 @@ az aks create \
 --enable-keda \
 --generate-ssh-keys \
 --attach-acr $ACR_NAME \
---node-vm-size Standard_B2s \
+--node-vm-size Standard_B2ms \
 --node-count 1 \
 --enable-cluster-autoscaler \
---min-count 1 --max-count 3
+--min-count 1 --max-count 3 \
+--enable-vpa
 
 # Get the credentials for the AKS cluster
 az aks get-credentials \

@@ -1,0 +1,21 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: agents-vpa
+spec:
+  updatePolicy:
+    updateMode: "Off"
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: azdevops-deployment
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        # minAllowed:
+        #   cpu: 100m
+        #   memory: 50Mi
+        maxAllowed:
+          cpu: 1
+          memory: 3Gi
+        controlledResources: ["cpu", "memory"]
