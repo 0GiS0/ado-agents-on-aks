@@ -1,5 +1,5 @@
 trigger:
-- main
+- windows-agents
 
 pool: win-agents-on-aks
 
