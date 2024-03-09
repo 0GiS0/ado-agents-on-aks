@@ -36,10 +36,6 @@ spec:
               secretKeyRef:
                 name: azdevops-pat
                 key: personalAccessToken
-        resources:
-          requests:
-            cpu: 100m
-            memory: 1Gi
         volumeMounts:
         - mountPath: /var/run/docker.sock
           name: docker-volume
