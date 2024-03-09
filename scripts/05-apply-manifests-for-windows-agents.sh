@@ -1,4 +1,6 @@
-kubectl create secret generic azdevops-pat --from-literal=personalAccessToken=$PAT
+kubectl create namespace windows-agents
+
+kubectl create secret generic azdevops-pat --from-literal=personalAccessToken=$PAT -n windows-agents
 
 cat <<EOF | kubectl apply -f -
 # cat <<EOF > azdevops-deployment.yaml
@@ -8,6 +10,7 @@ metadata:
   name: azdevops-deployment
   labels:
     app: azdevops-agent
+  namespace: windows-agents
 spec:
   replicas: 1
   selector:
@@ -18,14 +21,16 @@ spec:
       labels:
         app: azdevops-agent
     spec:
+      nodeSelector:
+        "kubernetes.io/os": windows
       containers:
       - name: azdevops-agent
-        image: $ACR_NAME.azurecr.io/ado-agent:$IMAGE_ID
+        image: $ACR_NAME.azurecr.io/$WINDOWS_IMAGE_NAME:$WINDOWS_IMAGE_ID
         env:
           - name: AZP_URL
             value: "https://dev.azure.com/$ORGANIZATION_NAME"
           - name: AZP_POOL
-            value: "$AGENT_POOL_NAME"
+            value: "$WINDOWS_AGENT_POOL_NAME"
           - name: AZP_TOKEN
             valueFrom:
               secretKeyRef:
@@ -51,6 +56,7 @@ apiVersion: keda.sh/v1alpha1
 kind: TriggerAuthentication
 metadata:
   name: pipeline-trigger-auth
+  namespace: windows-agents
 spec:
   secretTargetRef:
     - parameter: personalAccessToken
@@ -61,6 +67,7 @@ apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: azure-pipelines-scaledobject
+  namespace: windows-agents
 spec:
   scaleTargetRef:
     name: azdevops-deployment
@@ -69,8 +76,34 @@ spec:
   triggers:
   - type: azure-pipelines
     metadata:
-      poolName: "$AGENT_POOL_NAME"
+      poolName: "$WINDOWS_AGENT_POOL_NAME"
       organizationURLFromEnv: "AZP_URL"
     authenticationRef:
      name: pipeline-trigger-auth
+EOF
+
+
+# VPA for the windows agents
+cat <<EOF | kubectl apply -f -
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: agents-vpa
+spec:
+  updatePolicy:
+    updateMode: "Off"
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: azdevops-deployment
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        # minAllowed:
+        #   cpu: 100m
+        #   memory: 50Mi
+        maxAllowed:
+          cpu: 1
+          memory: 3Gi
+        controlledResources: ["cpu", "memory"]
 EOF

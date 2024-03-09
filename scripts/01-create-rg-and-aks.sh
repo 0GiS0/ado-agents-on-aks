@@ -22,7 +22,8 @@ az aks create \
 --min-count 1 --max-count 3 \
 --enable-vpa \
 --windows-admin-username azureuser \
---windows-admin-password $WIN_PASSWORD
+--windows-admin-password $WIN_PASSWORD \
+--network-plugin azure
 
 # Add node pool for Windows containers
 az aks nodepool add \

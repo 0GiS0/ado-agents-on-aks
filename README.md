@@ -28,13 +28,18 @@ source scripts/01-create-rg-and-aks.sh
 
 It will create a resource group and an AKS cluster. The AKS cluster will be created with a single node pool with a `Standard_B2s` VM size. This cluster will scale up to 3 nodes and down to 1 node.
 
-## Build the Docker image for the agent
+## Build the Docker images for the agents, Linux and Windows
 
-The next step is to build the Docker image for the agent. You can do this by running the following command:
+The next step is to build the Docker image for the agents. 
+
+This is the command to build the Docker image for the Linux agent:
 
 ```bash
 source scripts/02-build-docker-image-for-the-lx-agent.sh
 ```
+
+This is the command to build the Docker image for the Windows agent:
+
 ```bash
 source scripts/03-build-docker-image-for-the-win-agent.sh
 ```
@@ -53,13 +58,24 @@ docker run --rm -e AZP_URL="https://dev.azure.com/$ORGANIZATION_NAME" -e AZP_POO
 The next step is to deploy the manifests to AKS. You can do this by running the following command:
 
 ```bash
-source scripts/03-apply-manifests.sh
+source scripts/04-apply-manifests-for-linux-agents.sh
+
+watch kubectl get pods -n linux-agents
+
+kubectl logs -f $(kubectl get pods  -n linux-agents -l app=azdevops-agent -o jsonpath="{.items[0].metadata.name}")  -n linux-agents
+```
+
+```bash
+source scripts/05-apply-manifests-for-windows-agents.sh
+
+watch kubectl get pods -n windows-agents
+
+kubectl logs -f $(kubectl get pods  -n windows-agents -l app=azdevops-agent -o jsonpath="{.items[0].metadata.name}")  -n windows-agents
 ```
 
 Hurrah 🎉! You now have a running Azure DevOps agent on AKS. You can check the logs by running the following command:
 
 ```bash
-kubectl logs -f $(kubectl get pods -l app=azdevops-agent -o jsonpath="{.items[0].metadata.name}")
 ```
 
 And you can see how the pod scales by running the following command:

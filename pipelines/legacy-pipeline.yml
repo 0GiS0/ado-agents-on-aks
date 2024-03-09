@@ -1,0 +1,12 @@
+trigger:
+- main
+
+pool: win-agents-on-aks
+
+steps:
+- checkout: git://Self-hosted%20agents%20on%20AKS/WebApiDotNetFramework
+- script: echo "Running this job on $(Agent.OS) with name $(Agent.Name) and version $(Agent.Version)"
+  displayName: 'Showing OS of the agent'
+- script: nuget restore WebApiDotNetFramework.sln
+  displayName: 'Restoring NuGet packages'
+- script: msbuild WebApiDotNetFramework.sln /p:Configuration=Release
