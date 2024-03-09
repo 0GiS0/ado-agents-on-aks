@@ -33,7 +33,10 @@ It will create a resource group and an AKS cluster. The AKS cluster will be crea
 The next step is to build the Docker image for the agent. You can do this by running the following command:
 
 ```bash
-source scripts/02-build-docker-image-for-the-agent.sh
+source scripts/02-build-docker-image-for-the-lx-agent.sh
+```
+```bash
+source scripts/03-build-docker-image-for-the-win-agent.sh
 ```
 
 You can test it locally by running the following commands:

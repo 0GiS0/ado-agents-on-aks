@@ -7,6 +7,8 @@ ACR_NAME="adoimages"
 AGENT_POOL_NAME="agents-on-aks"
 ORGANIZATION_NAME="returngisorg"
 
+WIN_PASSWORD="P@ssw0rd1234"
+
 # Check if .env file exists
 if [ -f .env ]; then
   echo -e ".env file exists"
