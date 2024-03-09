@@ -4,7 +4,7 @@ trigger:
 pool: win-agents-on-aks
 
 steps:
-- checkout: git://Self-hosted agetns on AKS/WebApiDotNetFramework
+- checkout: git://WebApiDotNetFramework
 - script: echo "Running this job on $(Agent.OS) with name $(Agent.Name) and version $(Agent.Version)"
   displayName: 'Showing OS of the agent'
 - script: nuget restore WebApiDotNetFramework.sln
