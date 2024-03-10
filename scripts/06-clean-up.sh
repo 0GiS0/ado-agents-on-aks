@@ -1,2 +1,2 @@
 # Clean up
-az group delete --name $RESOURCE_GROUP --yes
+time az group delete --name $RESOURCE_GROUP --yes

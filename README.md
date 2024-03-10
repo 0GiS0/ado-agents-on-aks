@@ -100,7 +100,7 @@ I've created a couple of pipelines to test this new pool. You can find them in t
 Don't forget to clean up the resources once you are done. You can do this by running the following command:
 
 ```bash
-source scripts/04-clean-up.sh
+source scripts/06-clean-up.sh
 ```
 
 Happy coding!
