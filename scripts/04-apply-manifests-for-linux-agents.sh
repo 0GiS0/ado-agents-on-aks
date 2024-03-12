@@ -83,7 +83,8 @@ cat <<EOF | kubectl apply -f -
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
 metadata:
-  name: agents-vpa
+  name: linux-agents-vpa
+  namespace: linux-agents
 spec:
   updatePolicy:
     updateMode: "Off"
