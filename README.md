@@ -4,7 +4,9 @@ This repository contains the necessary files to run Azure DevOps agents, Linux &
 
 ## Prerequisites
 
-The first thing you need to do is create an Agent Pool in Azure DevOps. You can do this by navigating to the `Organization Settings` -> `Agent Pools` and clicking on `Add Pool`. Once you have created the pool, you will need to create a Personal Access Token (PAT) with the `Agent Pools (read, manage)` scope. You can do this by navigating to `User Settings` -> `Personal access tokens` and clicking on `New Token`. Make sure to save the token as you will not be able to see it again.
+The first thing you need to do is create a couple of Agent Pools in Azure DevOps. You can do this by navigating to the `Organization Settings` -> `Agent Pools` and clicking on `Add Pool`. Repeat this process for the Linux and Windows agent pools. Make sure to save the names of the pools as you will need them later.
+
+Once you have created them, you will need a Personal Access Token (PAT) with the `Agent Pools (read, manage)` scope. You can do this by navigating to `User Settings` -> `Personal access tokens` and clicking on `New Token`. Make sure to save the token as you will not be able to see it again.
 
 Make sure you save your PAT in a `.env` file in the root of the repository. The file should look like this:
 
