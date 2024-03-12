@@ -1,6 +1,6 @@
 # Running Azure DevOps agents on Azure Kubernetes Service
 
-This repository contains the necessary files to run Azure DevOps agents on Azure Kubernetes Service (AKS).
+This repository contains the necessary files to run Azure DevOps agents, Linux & Windows, on Azure Kubernetes Service (AKS).
 
 ## Prerequisites
 
