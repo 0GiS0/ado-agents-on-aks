@@ -8,12 +8,14 @@ resources:
 trigger:
 - main
 
-pool: agents-on-aks
+pool: linux-agents-on-aks
 
 steps:
 - checkout: MyDotNetRepo
 - script: echo "Running this job on $(Agent.OS) with name $(Agent.Name) and version $(Agent.Version)"
   displayName: 'Showing OS of the agent'
+- script: echo "Check working directory"
+  workingDirectory: $(System.DefaultWorkingDirectory)
 - script: az version
   displayName: 'Showing Azure CLI version'
 - script: dotnet --help

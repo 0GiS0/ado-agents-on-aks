@@ -22,7 +22,7 @@ spec:
         app: azdevops-agent
     spec:
       nodeSelector:
-        "kubernetes.io/os": windows
+        "agentpool": win
       containers:
       - name: azdevops-agent
         image: $ACR_NAME.azurecr.io/$WINDOWS_IMAGE_NAME:$WINDOWS_IMAGE_ID
@@ -43,10 +43,14 @@ spec:
         volumeMounts:
         - mountPath: /var/run/docker.sock
           name: docker-volume
+        - mountPath: "c:/agent/_work"
+          name: workdir
       volumes:
       - name: docker-volume
         hostPath:
           path: /var/run/docker.sock
+      - name: workdir
+        emptyDir: {}
 EOF
 
 # Let create KEDA configuration to scale the agents

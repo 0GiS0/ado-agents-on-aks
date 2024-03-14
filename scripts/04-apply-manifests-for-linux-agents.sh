@@ -22,7 +22,7 @@ spec:
         app: azdevops-agent
     spec:
       nodeSelector:
-        "kubernetes.io/os": linux
+        "agentpool": linux        
       containers:
       - name: azdevops-agent
         image: $ACR_NAME.azurecr.io/$LINUX_IMAGE_NAME:$IMAGE_ID
