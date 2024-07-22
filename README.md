@@ -46,6 +46,12 @@ This is the command to build the Docker image for the Windows agent:
 source scripts/03-build-docker-image-for-the-win-agent.sh
 ```
 
+Build it locally by running the following commands:
+
+```powershell
+docker build -t win-ado-agent windows-ado-agent/.
+```
+
 You can test it locally by running the following commands:
 
 ```bash
