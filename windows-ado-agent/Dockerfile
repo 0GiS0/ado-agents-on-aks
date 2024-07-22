@@ -14,12 +14,14 @@ RUN choco install dotnetcore-runtime --version 2.2.7 -y \
   choco install jfrog-cli -y; \
   choco install awscli -y; \
   choco install azure-cli -y; \
-  choco install azuresigntool -y; \
-  choco install sonarqube -y; \
+  # choco install azuresigntool -y; \
+  # choco install sonarqube -y; \
+  choco install sonarqube-scanner.portable -y; \
   choco install jdk8 -y; \
   choco install python -y; \
   choco install openssl -y; \
-  choco install 7zip -y
+  choco install 7zip -y; \
+  dotnet tool install --global AzureSignTool;
 
 COPY ./start.ps1 ./
 

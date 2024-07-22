@@ -12,20 +12,22 @@ steps:
 - script: nuget restore WebApiDotNetFramework.sln
   displayName: 'Restoring NuGet packages'
 - script: msbuild WebApiDotNetFramework.sln /p:Configuration=Release
+- script: choco list
+  displayName: 'Check all installed packages'  
 - script: git --version
   displayName: 'Check git CLI installation'
   continueOnError: true
-- script: jf --version
-  displayName: 'Check jfrog-cli'
+- script: jfrog -v
+  displayName: 'Check jfrog-CLI'
   continueOnError: true
 - script: aws --version
-  displayName: 'Check awscli installation'
+  displayName: 'Check awsCLI installation'
   continueOnError: true
 - script: az --version
-  displayName: 'Check az cli installation'
+  displayName: 'Check az CLI installation'
   continueOnError: true
-- script: azuresigntool --help
-  displayName: 'Check sign cli installation'
+- script: azuresigntool --version
+  displayName: 'Check azuresigntool CLI installation'
   continueOnError: true
 - script: sonar-scanner --version 
   displayName: 'Check sonarqube CLI installation'
