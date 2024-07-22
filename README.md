@@ -97,6 +97,22 @@ watch kubectl get scaledobject
 
 I've created a couple of pipelines to test this new pool. You can find them in the `pipelines` folder. You can import them into your Azure DevOps organization and run them.
 
+## Connect it to some of the agents
+
+
+
+```bash
+kubectl exec -it $(kubectl get pods -n windows-agents -l app=azdevops-agent -o jsonpath="{.items[0].metadata.name}") -n windows-agents -- powershell
+```
+
+Now you can check any command that you need in order to integrate it in your pipeline:
+
+```powershell
+$paths = $env:PATH -split ';'
+$executables = $paths | ForEach-Object { Get-ChildItem $_ -Filter "*.exe" -ErrorAction SilentlyContinue }
+$executables.Name | Sort-Object -Unique
+```
+
 ## Clean up
 
 Don't forget to clean up the resources once you are done. You can do this by running the following command:

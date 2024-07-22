@@ -7,6 +7,9 @@ resources:
 
 trigger:
 - main
+  paths:
+    include:
+    - pipelines/dotnet-pipeline.yml
 
 pool: linux-agents-on-aks
 

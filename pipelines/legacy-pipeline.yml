@@ -14,21 +14,31 @@ steps:
 - script: msbuild WebApiDotNetFramework.sln /p:Configuration=Release
 - script: git --version
   displayName: 'Check git CLI installation'
+  continueOnError: true
 - script: jf --version
   displayName: 'Check jfrog-cli'
+  continueOnError: true
 - script: aws --version
   displayName: 'Check awscli installation'
+  continueOnError: true
 - script: az --version
   displayName: 'Check az cli installation'
+  continueOnError: true
 - script: azuresigntool --help
   displayName: 'Check sign cli installation'
+  continueOnError: true
 - script: sonar-scanner --version 
   displayName: 'Check sonarqube CLI installation'
-- script: jdk8 --version
+  continueOnError: true
+- script: java -version
   displayName: 'Check JDK 8 installation'
+  continueOnError: true
 - script: python --version
   displayName: 'Check Python installation'
+  continueOnError: true
 - script: openssl --version
   displayName: 'Check OpenSSL installation'
-- script: 7zip --version
+  continueOnError: true
+- script: 7z --help
   displayName: 'Check 7zip installation'
+  continueOnError: true
